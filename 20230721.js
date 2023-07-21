@@ -29,15 +29,15 @@ const MORSE_CODE = {
 };
 
 decodeMorse = function (morseCode) {
-  let wordsInMorseArray = morseCode.split("  "); // TWO spaces first
+  let morseWordsArray = morseCode.split("  "); // TWO spaces first
   // deal with each word
-  let translatedWords = wordsInMorseArray.map((morseWord) => {
-    let lettersInMorseArray = morseWord.split(" "); // array of individual letters
-    let plainLettersArray = lettersInMorseArray.map(
+  let translatedWords = morseWordsArray.map((morseWord) => {
+    let morseLettersArray = morseWord.split(" "); // array of individual letters
+    let englishLettersArray = morseLettersArray.map(
       (morseLetter) => MORSE_CODE[morseLetter]
     );
-    let plainLettersString = plainLettersArray.join("");
-    return plainLettersString;
+    let englishLettersString = englishLettersArray.join("");
+    return englishLettersString;
   });
   return translatedWords.join(" ").trim();
 };
