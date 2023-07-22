@@ -33,46 +33,32 @@ const MORSE_CODE = {
   "--..": "Z",
 };
 
-decodeMorse = function (morseCode) {
-  let morseWordsArray = morseCode.split("  "); // TWO spaces first
-  // deal with each word
-  let translatedWords = morseWordsArray.map((morseWord) => {
-    let morseLettersArray = morseWord.split(" "); // array of individual letters
-    let englishLettersArray = morseLettersArray.map(
-      (morseLetter) => MORSE_CODE[morseLetter]
-    );
-    let englishLettersString = englishLettersArray.join("");
-    return englishLettersString;
-  });
-  return translatedWords.join(" ").trim();
-};
+// decodeMorse = function (morseCode) {
+//   let morseWordsArray = morseCode.split("  "); // TWO spaces first
+//   // deal with each word
+//   let translatedWords = morseWordsArray.map((morseWord) => {
+//     let morseLettersArray = morseWord.split(" "); // array of individual letters
+//     let englishLettersArray = morseLettersArray.map(
+//       (morseLetter) => MORSE_CODE[morseLetter]
+//     );
+//     let englishLettersString = englishLettersArray.join("");
+//     return englishLettersString;
+//   });
+//   return translatedWords.join(" ").trim();
+// };
 
-decodeBits = function (bits) {
-  zeroTrim(bits);
-  let timeUnitLength = getTimeUnits(bits);
-};
+// in case it turns out someone made a typo in the specification . . .
+const wordBreakUnits = 7;
+const charBreakUnits = 3;
+const dashUnits = 3;
+const spacer = 1;
 
-// console.log(decodeMorse(".... . -.--   .--- ..- -.. ."));
-
+// helper functions
 function zeroTrim(item) {
   let noLeadingZeroes = item.replace(/^0+/, "");
   let noEndingZeroes = noLeadingZeroes.replace(/0+$/, "");
-  // console.log(`zeroTrim result: START${noEndingZeroes}END`);
   return noEndingZeroes;
 }
-
-// const getTimeUnits = (morsestring) => {
-//   let regex = /1+/g;
-//   let newStr = morsestring.replaceAll(regex, "|");
-//   let myArray = newStr.split("|");
-//   console.log(`myArray is ${myArray.join(" ")}`);
-//   let sortedArray = myArray.sort();
-//   sortedArray = sortedArray.filter((value) => value !== null);
-//   sortedArray = sortedArray.map((value) => toString(value));
-//   console.log(`sortedArray is ${sortedArray.join(" ")}`);
-//   console.log(`length is ${sortedArray[0].length}`);
-//   return 2;
-// };
 
 const getTimeUnits = (morsestring) => {
   const matchArray = [...morsestring.matchAll(/0+/g)];
@@ -81,34 +67,37 @@ const getTimeUnits = (morsestring) => {
   return zeroStrings[0].length;
 };
 
-function splitIntoWords(morsestring, timeUnits) {
-  // console.log(`timeUnits is ${timeUnits}`);
-  let wordBreak = "0".repeat(timeUnits * 7);
-  let morseWordsArray = morsestring.split(wordBreak);
-  // console.log(`morseWords is ${morseWords.join(" ")}`);
-  return morseWordsArray;
+const translate = (word) => {
+  let characters = word.split(" ".repeat(charBreakUnits));
+  let translated = characters.map(
+    (character) => MORSE_CODE[character.replaceAll(" ", "")]
+  );
+  return translated.join("");
+};
+
+// main functions
+function decodeBits(bits) {
+  bits = zeroTrim(bits);
+  let timeUnitLength = getTimeUnits(bits);
+
+  // make it more readable by replacing 0's with spaces
+  let onesAndSpaces = bits.replaceAll("0".repeat(timeUnitLength), " ");
+
+  // transform the 1's into dashes and dots.
+  let dashesOnly = onesAndSpaces.replaceAll(
+    "1".repeat(timeUnitLength * charBreakUnits),
+    "-"
+  );
+  let dotsAndDashes = dashesOnly.replaceAll("1".repeat(timeUnitLength), ".");
+  return dotsAndDashes;
 }
 
-function splitIntoChars(morsestring, timeUnits) {
-  let charBreak = "0".repeat(timeUnits * 3);
-  let morseCharsArray = morsestring.split(charBreak);
-  return morseCharsArray;
+function decodeMorse(morseString) {
+  // split into individual words
+  let wordsArray = morseString.split(" ".repeat(wordBreakUnits));
+  let translatedWordsArray = wordsArray.map((word) => translate(word));
+  return translatedWordsArray.join(" ");
 }
 
-function doItAll(morsestring) {
-  morsestring = zeroTrim(morsestring);
-  let timeUnits = getTimeUnits(morsestring);
-  console.log(timeUnits);
-  morseWords = splitIntoWords(morsestring, timeUnits);
-  console.log(morseWords);
-  console.log(splitIntoChars(morseWords[0], timeUnits));
-}
-
-function intoDotsAndDates(charsArray, timeUnits) {}
-
-// doItAll(morsestring);
-
-// console.log(morseWords);
-// morseWords.map((element) => {
-//   console.log(element.split(charBreak));
-// });
+let morseCode = decodeBits(morsestring);
+console.log(decodeMorse(morseCode));
