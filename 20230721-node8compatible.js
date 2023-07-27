@@ -8,7 +8,7 @@
 
 // let morsestring = "1111110001111110000000111111000111111";
 
-let morsestring = "111";
+let morsestring = "10001";
 
 const MORSE_CODE = {
   ".-": "A",
@@ -49,6 +49,7 @@ const spacer = 1;
 function zeroTrim(item) {
   let noLeadingZeroes = item.replace(/^0+/, "");
   let noEndingZeroes = noLeadingZeroes.replace(/0+$/, "");
+  // console.log(`zeroTrim returns ${noEndingZeroes}`);
   return noEndingZeroes;
 }
 
@@ -61,7 +62,7 @@ const getTimeUnits = (morsestring) => {
   }
   let zeroStrings = matchArray.map((item) => item[0]);
   zeroStrings.sort();
-  let smallestZeroSequence = 1;
+  let smallestZeroSequence = 0;
   if (zeroStrings.length > 0) {
     smallestZeroSequence = zeroStrings[0].length;
   }
@@ -75,17 +76,24 @@ const getTimeUnits = (morsestring) => {
   let onesStrings = onesMatchArray.map((item) => item[0]);
   onesStrings.sort();
   let smallestOnesSequence = onesStrings[0].length;
-
-  return smallestZeroSequence < smallestOnesSequence
-    ? smallestZeroSequence
-    : smallestOnesSequence;
+  if (smallestZeroSequence === 0) {
+    console.log(`timunits is smallest 1s sequence: ${smallestOnesSequence}`);
+    return smallestOnesSequence;
+  } else if (smallestOnesSequence < smallestZeroSequence) {
+    console.log(`timunits is smallest 0 sequence: ${smallestOnesSequence}`);
+    return smallestOnesSequence;
+  } else {
+    return smallestZeroSequence;
+  }
 };
 
 const translate = (word) => {
   let characters = word.split(" ".repeat(charBreakUnits));
+  console.log(`characters is ${characters}`);
   let translated = characters.map(
     (character) => MORSE_CODE[character.replace(/ /g, "")]
   );
+  console.log(translated);
   return translated.join("");
 };
 
