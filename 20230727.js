@@ -1,45 +1,85 @@
 // SNAIL
 // https://www.codewars.com/kata/521c2db8ddc89b9b7a0000c1/javascript
 
-let array = [
+// TESTS
+let regularArray = [
   [1, 2, 3],
   [4, 5, 6],
   [7, 8, 9],
 ];
 
-const traverse = (territory, startCoordStr, endCoordStr) => {
-  let startCoords = startCoordStr.split(",");
-  let endCoords = endCoordStr.split(",");
+let evenArray = [
+  [1, 2, 3, 4],
+  [5, 6, 7, 8],
+  [9, 10, 11, 12],
+  [13, 14, 15, 16],
+];
+
+let tinyArray = [
+  [0, 1],
+  [2, 3],
+];
+
+let regularArrayExpectedResult = [1, 2, 3, 6, 9, 8, 7, 4, 5];
+let evenArrayExpectedResult = [
+  1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10,
+];
+let tinyArrayExpectedResult = [0, 1, 3, 2];
+
+// HELPERS
+
+function moveOneStep(startingRow, startingCol, direction) {
+  let row = startingRow;
+  let col = startingCol;
+
+  switch (direction) {
+    case "down":
+      row = startingRow += 1;
+      break;
+    case "up":
+      row = startingRow -= 1;
+      break;
+    case "right":
+      col = startingCol += 1;
+      break;
+    case "left":
+      col = startingCol -= 1;
+      break;
+  }
+  // console.log(`row: ${row}, col: ${col}`)
+  return [row, col];
+}
+
+// PROCEDURAL
+
+function snailify(array) {
+  let n = array[0].length;
+  console.log(`n is ${n}`);
   let resultArray = [];
 
-  let diffY = endCoords[0] - startCoords[0];
-  let diffX = endCoords[1] - startCoords[1];
+  array[0].map((item) => resultArray.push(item));
+  console.log(`resultarray: ${resultArray}`);
+  // resultArray = [1,2,3]
 
-  let stepX;
-  let stepY;
+  let [row, col] = [0, n - 1];
+  console.log(`rowindex: ${row}, colindex: ${col}`);
 
-  if (diffY === 0) {
-    stepY = 0;
-  } else if (diffY > 0) {
-    stepY = 1;
-  } else {
-    stepY = -1;
+  let turns = 1;
+  let directions = ["right", "down", "left", "up"];
+  //   console.log(`direction: ${directions[turns % 4]}`);
+  // console.log(directions[turns%4]); -- "down"
+
+  for (let i = 1; i < 3; i++) {
+    console.log(moveOneStep(row, col, directions[turns % 4]));
+    console.log(
+      `Moving ${directions[turns % 4]} from rowindex: ${row}, colindex: ${col}`
+    );
+    [row, col] = moveOneStep(row, col, directions[turns % 4]);
+    console.log(`row is ${row}, col is ${col}`);
+    console.log(`digit is ${array[row][col]}`);
+    console.log(`${i}th pass completed OK.`);
+    // resultArray.push(array[row][col]);
   }
+}
 
-  if (diffX === 0) {
-    stepX = 0;
-  } else if (diffX > 0) {
-    stepX = 1;
-  } else {
-    stepX = -1;
-  }
-
-  console.log(`We are moving in a ${stepX} direction horizontally`);
-  console.log(`We are moving in a ${stepY} direction vertically`);
-};
-
-// traverse(array, "0,0", "0,2");
-// traverse(array, "0,2", "2,2");
-// traverse(array, "2,2", "2,0");
-// traverse(array, "2,0", "1,0");
-traverse(array, "1,0", "1,1");
+snailify(regularArray);
