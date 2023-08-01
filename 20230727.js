@@ -1,7 +1,3 @@
-// SNAIL
-// https://www.codewars.com/kata/521c2db8ddc89b9b7a0000c1/javascript
-
-// TESTS
 let regularArray = [
   [1, 2, 3],
   [4, 5, 6],
@@ -26,8 +22,6 @@ let evenArrayExpectedResult = [
 ];
 let tinyArrayExpectedResult = [0, 1, 3, 2];
 
-// HELPERS
-
 function moveOneStep(startingRow, startingCol, direction) {
   let row = startingRow;
   let col = startingCol;
@@ -50,36 +44,44 @@ function moveOneStep(startingRow, startingCol, direction) {
   return [row, col];
 }
 
-// PROCEDURAL
-
 function snailify(array) {
-  let n = array[0].length;
-  console.log(`n is ${n}`);
+  // setup first
+  let n = array.length;
+  // console.log(`n: ${n}`);
   let resultArray = [];
+  let lastcol = array[0].length - 1; // zero-indexing always throws me off.
+  let lastrow = array.length - 1; // zero-indexing always throws me off.
 
+  // we can take the entire first row
   array[0].map((item) => resultArray.push(item));
-  console.log(`resultarray: ${resultArray}`);
-  // resultArray = [1,2,3]
 
-  let [row, col] = [0, n - 1];
-  console.log(`rowindex: ${row}, colindex: ${col}`);
+  // set starting position
+  let [row, col] = [0, lastcol];
 
+  // start the spiral.
   let turns = 1;
   let directions = ["right", "down", "left", "up"];
-  //   console.log(`direction: ${directions[turns % 4]}`);
-  // console.log(directions[turns%4]); -- "down"
 
-  for (let i = 1; i < 3; i++) {
-    console.log(moveOneStep(row, col, directions[turns % 4]));
-    console.log(
-      `Moving ${directions[turns % 4]} from rowindex: ${row}, colindex: ${col}`
-    );
-    [row, col] = moveOneStep(row, col, directions[turns % 4]);
-    console.log(`row is ${row}, col is ${col}`);
-    console.log(`digit is ${array[row][col]}`);
-    console.log(`${i}th pass completed OK.`);
-    // resultArray.push(array[row][col]);
+  for (let i = 0; i < n + 3; i++) {
+    for (let i = 1; i <= 2; i++) {
+      for (let i = 1; i <= n - 1; i++) {
+        // console.log(directions[turns % 4]);
+        [row, col] = moveOneStep(row, col, directions[turns % 4]);
+        resultArray.push(array[row][col]);
+      }
+      turns++;
+    }
+    n--;
   }
+
+  return resultArray;
 }
 
-snailify(regularArray);
+console.log(snailify(regularArray));
+console.log(regularArrayExpectedResult);
+
+console.log(snailify(evenArray));
+console.log(evenArrayExpectedResult);
+
+console.log(snailify(tinyArray));
+console.log(tinyArrayExpectedResult);
